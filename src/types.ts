@@ -62,6 +62,7 @@ export type State = {
   speedLastUpdate: number;
 
   distance: number;
+  score: number;
 
   coins: number;
   fpv: boolean;

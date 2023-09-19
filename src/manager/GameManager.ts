@@ -119,9 +119,11 @@ export class GameManager {
         this.game.world.airplane.tick(deltaTime);
         this.game.state.distance +=
           this.game.state.speed * deltaTime * this.game.world.worldSettings.ratioSpeedDistance;
+        this.game.state.score = Math.floor(this.game.state.distance);
         this.game.state.speed +=
           (this.game.state.targetSpeed - this.game.state.speed) * deltaTime * 0.02;
         this.game.uiManager.updateDistanceDisplay();
+        this.game.uiManager.updateScoreDisplay();
 
         if (this.game.state.lifes <= 0 && canDie) {
           this.game.state.status = GameStatus.GameOver;
@@ -168,6 +170,7 @@ export class GameManager {
 
     // update ui
     this.game.uiManager.updateDistanceDisplay();
+    this.game.uiManager.updateScoreDisplay();
     this.game.uiManager.updateLevelCount();
     this.game.uiManager.updateLifesDisplay();
     this.game.uiManager.updateCoinsCount();

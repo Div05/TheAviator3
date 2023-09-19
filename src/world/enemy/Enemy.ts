@@ -1,10 +1,15 @@
-import {Colors} from '../../settings';
-import {utils} from '../../utils/utils.broken';
-import {Game} from '../../game';
-import {rotateAroundSea, spawnParticles} from '../../utils/utils';
-import {GameStatus} from '../../types';
-import THREE, {Mesh, TetrahedronGeometry, MeshPhongMaterial, Box3} from 'three';
-import {removeLife} from '../../mechanic/Lives';
+import { Colors } from "../../settings";
+import { utils } from "../../utils/utils.broken";
+import { Game } from "../../game";
+import { rotateAroundSea, spawnParticles } from "../../utils/utils";
+import { GameStatus } from "../../types";
+import THREE, {
+  Mesh,
+  TetrahedronGeometry,
+  MeshPhongMaterial,
+  Box3,
+} from "three";
+import { removeLife } from "../../mechanic/Lives";
 
 //region Enemies
 class Enemy {
@@ -15,7 +20,8 @@ class Enemy {
   allProjectiles;
 
   constructor(private game: Game) {
-    var geom = new TetrahedronGeometry(8, 2);
+    var randomSize = Math.floor(Math.random() * (16 - 4 + 1)) + 4;
+    var geom = new TetrahedronGeometry(randomSize, 2);
     var mat = new MeshPhongMaterial({
       color: Colors.red,
       shininess: 0,
@@ -26,14 +32,18 @@ class Enemy {
     this.mesh.castShadow = true;
     this.angle = 0;
     this.distance = 0;
-    this.hitpoints = 3;
+    this.hitpoints = 8;
     this.game.sceneManager.add(this);
   }
 
   tick(deltaTime) {
-    rotateAroundSea(this, deltaTime, this.game.world.worldSettings.enemiesSpeed);
-    this.mesh.rotation.y += Math.random() * 0.1;
-    this.mesh.rotation.z += Math.random() * 0.1;
+    rotateAroundSea(
+      this,
+      deltaTime,
+      this.game.world.worldSettings.enemiesSpeed,
+    );
+    this.mesh.rotation.y += Math.random() * 0.2;
+    this.mesh.rotation.z += Math.random() * 0.2;
 
     // collision?
     if (
@@ -69,15 +79,21 @@ class Enemy {
   }
 
   explode() {
-    this.game.audioManager.play('rock-shatter', {volume: 3});
-    spawnParticles(this.mesh.position.clone(), 15, Colors.red, 3, this.game.world.scene);
+    this.game.audioManager.play("rock-shatter", { volume: 3 });
+    spawnParticles(
+      this.mesh.position.clone(),
+      15,
+      Colors.red,
+      3,
+      this.game.world.scene,
+    );
     this.game.sceneManager.remove(this);
     this.game.state.statistics.enemiesKilled += 1;
   }
 }
 
 export function spawnEnemies(count: number, game: Game) {
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < count * 2; i++) {
     const enemy = new Enemy(game);
     enemy.angle = -(i * 0.1);
     enemy.distance =
@@ -86,7 +102,8 @@ export function spawnEnemies(count: number, game: Game) {
       (-1 + Math.random() * 2) * (game.world.worldSettings.planeAmpHeight - 20);
     enemy.mesh.position.x = Math.cos(enemy.angle) * enemy.distance;
     enemy.mesh.position.y =
-      -game.world.worldSettings.seaRadius + Math.sin(enemy.angle) * enemy.distance;
+      -game.world.worldSettings.seaRadius +
+      Math.sin(enemy.angle) * enemy.distance;
   }
   game.state.statistics.enemiesSpawned += count;
 }

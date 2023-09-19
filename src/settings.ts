@@ -81,6 +81,7 @@ export const DEFAULT_STATE = {
   speedLastUpdate: 0,
 
   distance: 0,
+  score:0,
 
   coins: 0,
   fpv: false,
